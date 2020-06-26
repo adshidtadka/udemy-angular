@@ -1,0 +1,107 @@
+<div class="main">
+  <div class="container-fluid">
+    <div class="stream-view">
+      <h2>RxJS Stream Visualizer</h2>
+      <div class="stream">
+        <div class="stream-item"
+          *ngFor="let item of streamService.items"
+          [style.background-color]="item.color"
+          (@itemState.done)="log($event, item)"
+          [@itemState]></div>
+      </div>
+    </div>
+    <div class="log">
+      <div class="logger">
+        <ul>
+          <li *ngFor="let log of logService.logs">{{ log }}</li>
+        </ul>
+      </div>
+      <div class="reset">
+        <button class="btn btn-sm btn-warning" (click)="clearLog()">クリア</button>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="form-group">
+        <select name="type" class="form-control" (change)="onSelect($event)">
+          <option *ngFor="let operator of streamService.operators" value="{{ operator }}">{{ operator }}</option>
+        </select>
+      </div>
+      <div class="form-group form-row">
+        <div class="col-10">
+            <input type="text" name="message" [(ngModel)]="message" (keyup)="onKeyup($event)" class="form-control">
+        </div>
+        <div class="col-2">
+          <button class="btn btn-block btn-primary" (click)="onEnter($event)">送信</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="code-block" [ngSwitch]="selectedOperator">
+    <pre *ngSwitchCase="'of'"><code class="typescript">
+    // 何もせずデータを流す
+    Observable.of(value);
+    </code></pre>
+    <pre *ngSwitchCase="'map'"><code class="typescript">
+    // 整形したデータを返す
+    Observable
+      .map(value => `map: ${{'{'}}value{{'}'}}`);
+    </code></pre>
+    <pre *ngSwitchCase="'throttleTime'"><code class="typescript">
+    // 連続する処理を250ミリ秒間隔で間引く
+    Observable
+      .throttleTime(250)
+      .map(value => `throttleTime(250): ${{'{'}}value{{'}'}}`);
+    </code></pre>
+    <pre *ngSwitchCase="'debounceTime'"><code class="typescript">
+    // 連続する最後の処理から250ミリ秒遅延後、
+    // 最後のデータを1度だけストリームに流す
+    Observable
+      .debounceTime(250)
+      .map(value => `debounceTime(250): ${{'{'}}value{{'}'}}`);
+    </code></pre>
+    <pre *ngSwitchCase="'distinctUntilChanged'"><code class="typescript">
+    // 前回と値が違う場合のみ、ストリームを流す
+    Observable
+      .distinctUntilChanged()
+      .map(value => `distinctUntilChanged: ${{'{'}}value{{'}'}}`);
+    </code></pre>
+    <pre *ngSwitchCase="'merge'"><code class="typescript">
+    // 複数のObservableを1本にまとめる
+    Observable
+      .merge(
+        interval(1200).take(4).map((index) => `(a: ${{'{'}}index + 1{{'}'}} / 4)`),  // red
+        interval(500).take(10).map((index) => `(b: ${{'{'}}index + 1{{'}'}} / 10)`), // green
+      ),
+      .map(value => {{'{'}}
+        if (value.startsWith('(a')) {{'{'}}
+          return {{'{'}} message: `merge: ${{'{'}}value{{'}'}}`, color: 'rgb(226, 149, 126)' {{'}'}};
+        {{'}'}} else if (value.startsWith('(b')) {{'{'}}
+          return {{'{'}} message: `merge: ${{'{'}}value{{'}'}}`, color: 'rgb(126, 226, 134)' {{'}'}};
+        {{'}'}}
+      {{'}'}})
+    </code></pre>
+    <pre *ngSwitchCase="'switchMap'"><code class="typescript">
+    // ストリーム（A）に流れてくるデータを元に、別のストリーム（B）を流す。
+    // 別のストリーム（B）が終わる前に、元のストリーム（A）が流れた場合、
+    // （B）は途中でキャンセル・破棄され、始めから再び実行される
+    Observable
+      .switchMap(value => {{'{'}}
+        return Observable.interval(1000).take(5).map((index) => `switchMap: ${{'{'}}index{{'}'}} => ${{'{'}}value{{'}'}}`);
+      {{'}'}});
+    </code></pre>
+    <pre *ngSwitchCase="'skip'"><code class="typescript">
+    // 指定回数分のストリームを流さず、スキップする
+    Observable
+      .skip(3)
+      .map(value => `skip: ${{'{'}}value{{'}'}}`);
+    </code></pre>
+    <pre *ngSwitchCase="'take'"><code class="typescript">
+    // 指定回数分のみストリームを流す
+    let counter = 0;
+
+    Observable
+      .take(3)
+      .map(value => `take(${{'{'}}++counter{{'}'}}): ${{'{'}}value{{'}'}}`)
+    </code></pre>
+  </div>
+</div>
