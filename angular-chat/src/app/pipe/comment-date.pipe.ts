@@ -7,6 +7,6 @@ import * as ja from 'date-fns/locale/ja';
 })
 export class CommentDatePipe implements PipeTransform {
   transform(date: string): string {
-    return format(date, 'YYYY年MMMDo H:m', { locale: ja });
+    return format(date, 'YYYY年MMMDo H:mm', { locale: ja });
   }
 }
