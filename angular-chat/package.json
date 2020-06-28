@@ -51,6 +51,7 @@
     "typescript-eslint-parser": "^22.0.0"
   },
   "prettier": {
+    "arrowParens": "avoid",
     "singleQuote": true
   }
 }
