@@ -10,9 +10,10 @@ import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ChatComponent } from './chat/chat.component';
+import { NotFoundComponent } from './error/not-found/not-found.component';
 
 @NgModule({
-  declarations: [AppComponent, ChatComponent],
+  declarations: [AppComponent, ChatComponent, NotFoundComponent],
   imports: [
     BrowserModule,
     SharedModule,
