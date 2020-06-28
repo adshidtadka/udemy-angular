@@ -3,11 +3,16 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { ChatComponent } from './chat/chat.component';
 import { NotFoundComponent } from './error/not-found/not-found.component';
+import { SignUpComponent } from './sign-up/sign-up.component';
 
 const routes: Routes = [
   {
     path: '',
     component: ChatComponent,
+  },
+  {
+    path: 'signup',
+    component: SignUpComponent,
   },
   {
     path: '**',
