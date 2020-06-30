@@ -8,17 +8,23 @@ import { AngularFireAuthModule } from 'angularfire2/auth';
 import { environment } from '../environments/environment';
 
 import { AppRoutingModule } from './app-routing.module';
+import { TimelineModule } from './timeline/timeline.module';
 import { AppComponent } from './app.component';
-import { ChatComponent } from './chat/chat.component';
 import { NotFoundComponent } from './error/not-found/not-found.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { LoginComponent } from './login/login.component';
 
 @NgModule({
-  declarations: [AppComponent, ChatComponent, NotFoundComponent, SignUpComponent, LoginComponent],
+  declarations: [
+    AppComponent,
+    NotFoundComponent,
+    SignUpComponent,
+    LoginComponent,
+  ],
   imports: [
     BrowserModule,
     SharedModule,
+    TimelineModule,
     CoreModule,
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebase),
