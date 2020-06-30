@@ -2,9 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Comment } from './../class/comment';
 import { User } from './../class/user';
 import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
-
-const CURRENT_USER: User = new User(1, '立川めめめ');
-const ANOTHER_USER: User = new User(2, '戸川めめめ');
+import { AngularFireAuth } from 'angularfire2/auth';
 
 @Component({
   selector: 'app-chat',
@@ -14,16 +12,28 @@ const ANOTHER_USER: User = new User(2, '戸川めめめ');
 export class ChatComponent implements OnInit {
   comments: Comment[];
   commentsRef: AngularFireList<any>;
-  currentUser = CURRENT_USER;
+  currentUser: User;
   content = '';
 
-  constructor(private db: AngularFireDatabase) {
+  constructor(
+    private db: AngularFireDatabase,
+    private afAuth: AngularFireAuth
+  ) {
     this.commentsRef = this.db.list('comments');
   }
 
   ngOnInit(): void {
-    this.commentsRef.snapshotChanges().subscribe((snapshots) => {
-      this.comments = snapshots.map((snapshot) => {
+    if (this.afAuth.auth.currentUser) {
+      this.currentUser = new User(this.afAuth.auth.currentUser);
+    } else {
+      this.afAuth.auth.onAuthStateChanged(user => {
+        if (user) {
+          this.currentUser = new User(this.afAuth.auth.currentUser);
+        }
+      });
+    }
+    this.commentsRef.snapshotChanges().subscribe(snapshots => {
+      this.comments = snapshots.map(snapshot => {
         const values = snapshot.payload.val();
         return new Comment({ key: snapshot.payload.key, ...values });
       });
